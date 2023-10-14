@@ -23,14 +23,20 @@ paddle2 = pygame.Rect(WIDTH - 50 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 
 # Ball
 BALL_WIDTH = 25
 ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-ball_speed_x = 1
-ball_speed_y = 1
-speed_increment = 0.0003
+ball_speed_x = 2
+ball_speed_y = 2
+speed_increment = 0.005
 
 # Score
 score1 = 0
 score2 = 0
 font = pygame.font.Font(None, 36)
+
+# Initialize ball_color
+ball_color = (255, 255, 255)
+
+# Create a clock object to control the frame rate
+clock = pygame.time.Clock()
 
 # Main game loop
 while True:
@@ -47,9 +53,8 @@ while True:
         paddle1.y += 5
 
     # Control player 2 with mouse
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEMOTION:
-            paddle2.y = event.pos[1] - PADDLE_HEIGHT // 2
+    mouse_pos = pygame.mouse.get_pos()
+    paddle2.y = mouse_pos[1] - PADDLE_HEIGHT // 2
 
     # Move the ball
     ball.x += ball_speed_x
@@ -67,23 +72,28 @@ while True:
     if ball.left <= 0:
         score2 += 1
         ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-        ball_speed_x = 1
-        ball_speed_y = 1
+        ball_speed_x = 2
+        ball_speed_y = 2
+        ball_color = (random.randint(1, 255), random.randint(1, 255), random.randint(1, 255))
     elif ball.right >= WIDTH:
         score1 += 1
         ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-        ball_speed_x = 1
-        ball_speed_y = 1
-        
+        ball_speed_x = 2
+        ball_speed_y = 2
+        ball_color = (random.randint(1, 255), random.randint(1, 255), random.randint(1, 255))
+
     # Gradually increase ball speed
     ball_speed_x += speed_increment
     ball_speed_y += speed_increment
+
+    # Limit the frame rate to 60 frames per second using clock.tick(60)
+    clock.tick(60)
 
     # Draw on the screen
     win.fill((0, 0, 0))
     pygame.draw.rect(win, WHITE, paddle1)
     pygame.draw.rect(win, WHITE, paddle2)
-    pygame.draw.ellipse(win, WHITE, ball)
+    pygame.draw.ellipse(win, ball_color, ball)  # Set the color to the random color
     score_text = font.render(f"{score1} - {score2}", True, WHITE)
     win.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, 20))
     pygame.display.flip()
