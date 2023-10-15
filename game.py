@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+from math import fabs
 
 # Initialize Pygame
 pygame.init()
@@ -25,6 +26,7 @@ rainbow_index = 0
 # Paddles
 PADDLE_WIDTH = 15
 PADDLE_HEIGHT = 100
+STEP = 5
 
 paddle1 = pygame.Rect(50, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
 paddle2 = pygame.Rect(WIDTH - 50 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
@@ -32,8 +34,8 @@ paddle2 = pygame.Rect(WIDTH - 50 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 
 # Ball
 BALL_WIDTH = 25
 ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-ball_speed_x = 2
-ball_speed_y = 2
+ball_speed_x = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
+ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
 speed_increment = 0.001
 
 # Score
@@ -50,6 +52,9 @@ clock = pygame.time.Clock()
 show_goal_screen = False
 goal_screen_timer = 0
 celebration_sound = 1
+
+# Cursor Setting
+pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
 
 # Function to generate a random color
 def random_color():
@@ -90,19 +95,18 @@ while True:
         keys = pygame.key.get_pressed()
         # Control player 1 with keyboard
         if keys[pygame.K_w] and paddle1.top > 0:
-            paddle1.y -= 5
+            paddle1.y -= STEP
         if keys[pygame.K_s] and paddle1.bottom < HEIGHT:
-            paddle1.y += 5
+            paddle1.y += STEP
 
         # Control player 2 with mouse
-        mouse_pos = pygame.mouse.get_pos()
-        paddle2.y = mouse_pos[1] - PADDLE_HEIGHT // 2
+        y_last_pos = paddle2.y
+        y_mouse_pos = pygame.mouse.get_pos()[1]
 
-        # Ensure that the paddle2 doesn't go beyond the window boundaries
-        if paddle2.top < 0:
-            paddle2.top = 0
-        if paddle2.bottom > HEIGHT:
-            paddle2.bottom = HEIGHT
+        if y_mouse_pos < y_last_pos and paddle2.top > 0 and fabs(y_mouse_pos-y_last_pos)>=STEP:
+            paddle2.y -= STEP
+        elif y_mouse_pos > y_last_pos and paddle2.bottom < HEIGHT and fabs(y_mouse_pos-y_last_pos)>=STEP:
+            paddle2.y += STEP
 
         # Move the ball
         ball.x += ball_speed_x
@@ -129,8 +133,8 @@ while True:
             show_goal_screen = True  # Show "GOAL" screen
 
         # Gradually increase ball speed
-        ball_speed_x += speed_increment
-        ball_speed_y += speed_increment
+        ball_speed_x += speed_increment if ball_speed_x>0 else -speed_increment
+        ball_speed_y += speed_increment if ball_speed_y>0 else -speed_increment
 
     # Limit the frame rate to 60 frames per second using clock.tick(60)
     clock.tick(60)
