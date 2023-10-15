@@ -5,6 +5,13 @@ import sys
 # Initialize Pygame
 pygame.init()
 
+# Initialize the mixer for sound effects
+pygame.mixer.init()
+
+# Load the sound files
+collide_sound = pygame.mixer.Sound("collide.mp3")
+goal_sound = pygame.mixer.Sound("goal.mp3")
+
 # Window settings
 WIDTH, HEIGHT = 800, 600
 win = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -42,6 +49,7 @@ clock = pygame.time.Clock()
 # Goal screen settings
 show_goal_screen = False
 goal_screen_timer = 0
+celebration_sound = 1
 
 # Function to generate a random color
 def random_color():
@@ -59,6 +67,10 @@ while True:
             sys.exit()
 
     if show_goal_screen:
+        if celebration_sound == 1:
+            # Play the goal sound
+            goal_sound.play()  # Play the goal sound effect
+            celebration_sound = 0
         # Display "GOAL" screen for 2 seconds
         if goal_screen_timer < 120:  # 2 seconds (60 frames per second)
             goal_screen_timer += 1
@@ -72,6 +84,7 @@ while True:
             # Set random colors for ball and paddles after a goal
             rainbow_index = 0  # Reset the rainbow index
             ball_color = random_color()
+            celebration_sound = 1
 
     else:
         keys = pygame.key.get_pressed()
@@ -98,11 +111,15 @@ while True:
         # Collisions with paddles
         if ball.colliderect(paddle1) or ball.colliderect(paddle2):
             ball_speed_x *= -1
+            # Play the collide sound
+            collide_sound.play()  # Play the collision sound effect
 
         # Collisions with the window edges
         if ball.top <= 0 or ball.bottom >= HEIGHT:
             ball_speed_y *= -1
-
+            # Play the collide sound
+            collide_sound.play()  # Play the collision sound effect
+            
         # Score handling
         if ball.left <= 0:
             score2 += 1
