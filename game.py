@@ -54,7 +54,7 @@ goal_screen_timer = 0
 celebration_sound = 1
 
 # Cursor Setting
-pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
 
 # Function to generate a random color
 def random_color():
@@ -103,9 +103,9 @@ while True:
         y_last_pos = paddle2.y
         y_mouse_pos = pygame.mouse.get_pos()[1]
 
-        if y_mouse_pos < y_last_pos and paddle2.top > 0 and fabs(y_mouse_pos-y_last_pos)>=STEP:
+        if y_mouse_pos < y_last_pos and paddle2.top > 0 and fabs(y_mouse_pos - y_last_pos) >= STEP:
             paddle2.y -= STEP
-        elif y_mouse_pos > y_last_pos and paddle2.bottom < HEIGHT and fabs(y_mouse_pos-y_last_pos)>=STEP:
+        elif y_mouse_pos > y_last_pos and paddle2.bottom < HEIGHT and fabs(y_mouse_pos - y_last_pos) >= STEP:
             paddle2.y += STEP
 
         # Move the ball
@@ -113,7 +113,7 @@ while True:
         ball.y += ball_speed_y
 
         # Collisions with paddles
-        if ball.colliderect(paddle1) or ball.colliderect(paddle2):
+        if (ball.colliderect(paddle1) and ball_speed_x < 0) or (ball.colliderect(paddle2) and ball_speed_x > 0):
             ball_speed_x *= -1
             # Play the collide sound
             collide_sound.play()  # Play the collision sound effect
@@ -123,7 +123,7 @@ while True:
             ball_speed_y *= -1
             # Play the collide sound
             collide_sound.play()  # Play the collision sound effect
-            
+
         # Score handling
         if ball.left <= 0:
             score2 += 1
@@ -133,8 +133,8 @@ while True:
             show_goal_screen = True  # Show "GOAL" screen
 
         # Gradually increase ball speed
-        ball_speed_x += speed_increment if ball_speed_x>0 else -speed_increment
-        ball_speed_y += speed_increment if ball_speed_y>0 else -speed_increment
+        ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
+        ball_speed_y += speed_increment if ball_speed_y > 0 else -speed_increment
 
     # Limit the frame rate to 60 frames per second using clock.tick(60)
     clock.tick(60)
@@ -153,5 +153,7 @@ while True:
         win.blit(goal_text, (WIDTH // 2 - goal_text.get_width() // 2, HEIGHT // 2 - goal_text.get_height() // 2))
         # Cycle through rainbow colors
         rainbow_index = (rainbow_index + 1) % len(RAINBOW_COLORS)
-        
-    pygame.display.flip()
+
+    pygame.display.update()  # Update the display
+
+pygame.quit()
