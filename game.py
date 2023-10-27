@@ -34,7 +34,10 @@ paddle2 = pygame.Rect(WIDTH - 50 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 
 # Ball
 BALL_WIDTH = 25
 ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-ball_speed_x = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
+
+# Initialize the ball's starting direction based on the initial score
+initial_ball_speed_x = 2 if random.randint(0, 1) == 0 else -2
+ball_speed_x = initial_ball_speed_x
 ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
 speed_increment = 0.001
 
@@ -84,8 +87,12 @@ while True:
             goal_screen_timer = 0
             # Reset the ball and continue the game
             ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
-            ball_speed_x = 2
-            ball_speed_y = 2
+            # Alternate the ball's starting direction based on the score
+            if (score1 + score2) % 2 == 0:
+                ball_speed_x = initial_ball_speed_x
+            else:
+                ball_speed_x = -initial_ball_speed_x
+            ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
             # Set random colors for ball and paddles after a goal
             rainbow_index = 0  # Reset the rainbow index
             ball_color = random_color()
