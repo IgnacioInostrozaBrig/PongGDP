@@ -7,13 +7,10 @@ from pygame.locals import *
 def play_pong_game(difficulty):
     # Initialize Pygame
     pygame.init()
-
     print(difficulty)
     
     # Initialize the mixer for sound effects
     pygame.mixer.init()
-
-    # Load the sound files
     collide_sound = pygame.mixer.Sound("collide.mp3")
     goal_sound = pygame.mixer.Sound("goal.mp3")
     victory_sound = pygame.mixer.Sound("triumph.mp3")
@@ -30,8 +27,15 @@ def play_pong_game(difficulty):
     rainbow_index = 0
 
     # Paddles
-    PADDLE_WIDTH = 15
-    PADDLE_HEIGHT = 100
+    PADDLE_WIDTH = 10
+    if(difficulty)=="easy":
+        PADDLE_HEIGHT = 100
+    elif(difficulty)=="medium":
+        PADDLE_HEIGHT = 75
+    elif(difficulty)=="hard":
+        PADDLE_HEIGHT = 50
+    elif(difficulty)=="impossible":
+        PADDLE_HEIGHT = 50
     STEP = 5
 
     paddle1 = pygame.Rect(50, HEIGHT // 2 - PADDLE_HEIGHT // 2, PADDLE_WIDTH, PADDLE_HEIGHT)
@@ -83,7 +87,7 @@ def play_pong_game(difficulty):
 
     # Initialize the ball's starting position in the center
     ball_start_time = time.time()
-    ball_waiting_time = 3  # 3 seconds
+    ball_waiting_time = 3
     start_sound.play() 
 
     # init game
@@ -105,7 +109,7 @@ def play_pong_game(difficulty):
                 goal_sound.play()  # Play the goal sound effect
                 celebration_sound = 0
             # Display "GOAL" screen for 2 seconds
-            if goal_screen_timer < 120:  # 2 seconds (60 frames per second)
+            if goal_screen_timer < 120:
                 goal_screen_timer += 1
             else:
                 show_goal_screen = False
@@ -118,8 +122,7 @@ def play_pong_game(difficulty):
                 else:
                     ball_speed_x = -initial_ball_speed_x
                 ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
-                # Set random colors for ball and paddles after a goal
-                rainbow_index = 0  # Reset the rainbow index
+                rainbow_index = 0
                 ball_color = random_color()
                 celebration_sound = 1
 
@@ -129,10 +132,10 @@ def play_pong_game(difficulty):
                 victory_sound.play()
                 victory_sound_played = True
             # Display "Player 1/2 wins the game!" screen for 5 seconds
-            if victory_screen_timer < 300:  # 5 seconds (60 frames per second)
+            if victory_screen_timer < 300:
                 victory_screen_timer += 1
                 if victory_screen_timer == 1:
-                    rainbow_index = 0  # Reset the rainbow index
+                    rainbow_index = 0
             else:
                 # Remain paused until any key is pressed
                 keys = pygame.key.get_pressed()
@@ -175,14 +178,12 @@ def play_pong_game(difficulty):
                 # Collisions with paddles
                 if (ball.colliderect(paddle1) and ball_speed_x < 0) or (ball.colliderect(paddle2) and ball_speed_x > 0):
                     ball_speed_x *= -1
-                    # Play the collide sound
-                    collide_sound.play()  # Play the collision sound effect
+                    collide_sound.play()
 
                 # Collisions with the window edges
                 if ball.top <= 0 or ball.bottom >= HEIGHT:
                     ball_speed_y *= -1
-                    # Play the collide sound
-                    collide_sound.play()  # Play the collision sound effect
+                    collide_sound.play()
 
                 # Score handling
                 if ball.left <= 0:
@@ -191,14 +192,14 @@ def play_pong_game(difficulty):
                         # Player 2 wins the game
                         show_victory_screen = True
                     else:
-                        show_goal_screen = True  # Show "GOAL" screen
+                        show_goal_screen = True
                 elif ball.right >= WIDTH:
                     score1 += 1
                     if score1 == winning_score:
                         # Player 1 wins the game
                         show_victory_screen = True
                     else:
-                        show_goal_screen = True  # Show "GOAL" screen
+                        show_goal_screen = True
 
                 # Gradually increase ball speed
                 ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
@@ -212,18 +213,15 @@ def play_pong_game(difficulty):
         pygame.draw.rect(win, ball_color, paddle1)
         pygame.draw.rect(win, ball_color, paddle2)
 
-        # Draw "P1" and "P2" labels at the top of the score bar
         p1_label = font.render("P1", True, WHITE)
         p2_label = font.render(" P2", True, WHITE)
 
-        # Draw the center dotted line after the paddles
         dotted_line_color = ball_color
         for y in range(0, HEIGHT, 10):
             pygame.draw.rect(win, dotted_line_color, (WIDTH // 2 - 2, y, 4, 6))
 
         score_text = font.render(f"{score1} - {score2}", True, WHITE)
 
-        # Adjust the positions of labels and score text
         win.blit(p1_label, (WIDTH // 2 - score_text.get_width() // 2 - 50, 20))
         win.blit(p2_label, (WIDTH // 2 + score_text.get_width() // 2 + 10, 20))
         win.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, 20))
@@ -246,7 +244,7 @@ def play_pong_game(difficulty):
             else:
                 victory_text = font.render("Player 2 wins the game!", True, RAINBOW_COLORS[rainbow_index])
             win.blit(victory_text, (WIDTH // 2 - victory_text.get_width() // 2, HEIGHT // 2 - victory_text.get_height() // 2))
-            # Cycle through rainbow colors
+
             rainbow_index = (rainbow_index + 1) % len(RAINBOW_COLORS)
             
         pygame.display.update()  # Update the display
