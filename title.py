@@ -26,12 +26,12 @@ button_font = pygame.font.Font(None, 36)
 easy_button_rect = pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2 - 80, BUTTON_WIDTH, BUTTON_HEIGHT)
 medium_button_rect = pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2, BUTTON_WIDTH, BUTTON_HEIGHT)
 hard_button_rect = pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2 + 80, BUTTON_WIDTH, BUTTON_HEIGHT)
-impossible_button_rect = pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2 + 160, BUTTON_WIDTH, BUTTON_HEIGHT)
+crazy_button_rect = pygame.Rect(WIDTH // 2 - BUTTON_WIDTH // 2, HEIGHT // 2 - BUTTON_HEIGHT // 2 + 160, BUTTON_WIDTH, BUTTON_HEIGHT)
 
 # Special button settings
 exit_button_rect = pygame.Rect(WIDTH - 120, HEIGHT - 60, 100, 40)
 exit_button_text = button_font.render("Exit", True, BLACK)
-impossible_button_label = button_font.render("Impossible", True, BLACK)
+crazy_button_label = button_font.render("crazy", True, BLACK)
 
 # Function to check if the mouse is over a button
 def is_mouse_over_button(button_rect):
@@ -83,13 +83,13 @@ while running:
         pygame.draw.rect(win, WHITE, exit_button_rect)  # Revert to white background
         exit_button_label = button_font.render("Exit", True, BLACK)  # Corrected color to BLACK
 
-    # Impossible
-    if is_mouse_over_button(impossible_button_rect):
-        pygame.draw.rect(win, (255, 0, 0), impossible_button_rect)  # Red background
-        impossible_button_label = button_font.render("Impossible", True, WHITE)
+    # crazy
+    if is_mouse_over_button(crazy_button_rect):
+        pygame.draw.rect(win, (255, 0, 0), crazy_button_rect)  # Red background
+        crazy_button_label = button_font.render("Crazy", True, WHITE)
     else:
-        pygame.draw.rect(win, WHITE, impossible_button_rect)  # Revert to white background
-        impossible_button_label = button_font.render("Impossible", True, BLACK)
+        pygame.draw.rect(win, WHITE, crazy_button_rect)  # Revert to white background
+        crazy_button_label = button_font.render("Crazy", True, BLACK)
 
     # Draw the title text (PONG)
     title_text = title_font.render("- PONG -", True, WHITE)
@@ -101,13 +101,13 @@ while running:
     easy_label_rect = easy_button_label.get_rect(center=easy_button_rect.center)
     medium_label_rect = medium_button_label.get_rect(center=medium_button_rect.center)
     hard_label_rect = hard_button_label.get_rect(center=hard_button_rect.center)
-    impossible_label_rect = impossible_button_label.get_rect(center=impossible_button_rect.center)
+    crazy_label_rect = crazy_button_label.get_rect(center=crazy_button_rect.center)
    
     # Draw the button labels with centered text
     win.blit(easy_button_label, easy_label_rect)
     win.blit(medium_button_label, medium_label_rect)
     win.blit(hard_button_label, hard_label_rect)
-    win.blit(impossible_button_label, impossible_label_rect)
+    win.blit(crazy_button_label, crazy_label_rect)
 
     # Draw the exit button with text
     exit_label_rect = exit_button_label.get_rect(center=exit_button_rect.center)
@@ -124,8 +124,8 @@ while running:
                 selected_difficulty = "medium"
             elif is_mouse_over_button(hard_button_rect):
                 selected_difficulty = "hard"
-            elif is_mouse_over_button(impossible_button_rect):
-                selected_difficulty = "impossible"
+            elif is_mouse_over_button(crazy_button_rect):
+                selected_difficulty = "crazy"
             elif is_mouse_over_button(exit_button_rect):
                 running = False
         if event.type == KEYDOWN and event.key == K_ESCAPE:

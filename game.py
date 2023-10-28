@@ -9,7 +9,7 @@ def play_pong_game(difficulty):
     pygame.init()
     print(difficulty)
     
-    # Additional balls for "impossible" difficulty
+    # Additional balls for "crazy" difficulty
     additional_balls = []
     additional_ball_lifetime = 3.5  # Lifetime for additional balls in seconds
 
@@ -41,7 +41,7 @@ def play_pong_game(difficulty):
         PADDLE_HEIGHT = 75
     elif difficulty == "hard":
         PADDLE_HEIGHT = 50
-    elif difficulty == "impossible":
+    elif difficulty == "crazy":
         PADDLE_HEIGHT = 50
     STEP = 5
 
@@ -186,7 +186,7 @@ def play_pong_game(difficulty):
                 if (ball.colliderect(paddle1) and ball_speed_x < 0) or (ball.colliderect(paddle2) and ball_speed_x > 0):
                     ball_speed_x *= -1
                     collide_sound.play()
-                    if(difficulty=="impossible"):
+                    if(difficulty=="crazy"):
                         ball_color = random_color()
 
                 # Collisions with the window edges
@@ -214,12 +214,12 @@ def play_pong_game(difficulty):
                 ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
                 ball_speed_y += speed_increment if ball_speed_y > 0 else -speed_increment
 
-                # Additional balls for "impossible" difficulty
+                # Additional balls for "crazy" difficulty
                 for additional_ball in additional_balls:
                     additional_ball["ball"].x += additional_ball["speed_x"]
                     additional_ball["ball"].y += additional_ball["speed_y"]
 
-                # Spawn additional balls for "impossible" difficulty based on elapsed time
+                # Spawn additional balls for "crazy" difficulty based on elapsed time
                 if additional_balls:
                     # Check if additional balls should be despawned
                     balls_to_remove = []
@@ -233,7 +233,7 @@ def play_pong_game(difficulty):
                         additional_balls.pop(i)
 
                 # If the number of balls is less than the defined maximum, spawn a new ball
-                if len(additional_balls) < max_balls and difficulty == "impossible":
+                if len(additional_balls) < max_balls and difficulty == "crazy":
                     new_ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
                     additional_balls.append({
                         "ball": new_ball,
@@ -260,7 +260,7 @@ def play_pong_game(difficulty):
 
         score_text = font.render(f"{score1} - {score2}", True, WHITE)
 
-        # Draw additional balls for "impossible" difficulty
+        # Draw additional balls for "crazy" difficulty
         for additional_ball in additional_balls:
             pygame.draw.ellipse(win, additional_ball["color"], additional_ball["ball"])
 
