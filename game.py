@@ -12,6 +12,7 @@ pygame.mixer.init()
 # Load the sound files
 collide_sound = pygame.mixer.Sound("collide.mp3")
 goal_sound = pygame.mixer.Sound("goal.mp3")
+victory_sound = pygame.mixer.Sound("triumph.mp3")
 
 # Window settings
 WIDTH, HEIGHT = 800, 600
@@ -56,6 +57,14 @@ show_goal_screen = False
 goal_screen_timer = 0
 celebration_sound = 1
 
+# Victory screen settings
+show_victory_screen = False
+victory_screen_timer = 0
+victory_sound_played = False
+
+# Winning score
+winning_score = 5
+
 # Cursor Setting
 pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
 
@@ -98,6 +107,31 @@ while True:
             ball_color = random_color()
             celebration_sound = 1
 
+    elif show_victory_screen:
+        if not victory_sound_played:
+            # Play the victory sound
+            victory_sound.play()
+            victory_sound_played = True
+        # Display "Player 1/2 wins the game!" screen for 5 seconds
+        if victory_screen_timer < 300:  # 5 seconds (60 frames per second)
+            victory_screen_timer += 1
+            if victory_screen_timer == 1:
+                rainbow_index = 0  # Reset the rainbow index
+        else:
+            # Remain paused until any key is pressed
+            keys = pygame.key.get_pressed()
+            if any(keys):
+                show_victory_screen = False
+                victory_screen_timer = 0
+                victory_sound_played = False
+                score1 = 0
+                score2 = 0
+                ball_speed_x = initial_ball_speed_x
+                ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
+                ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
+                ball_color = (255, 255, 255)
+                celebration_sound = 1
+
     else:
         keys = pygame.key.get_pressed()
         # Control player 1 with keyboard
@@ -134,10 +168,18 @@ while True:
         # Score handling
         if ball.left <= 0:
             score2 += 1
-            show_goal_screen = True  # Show "GOAL" screen
+            if score2 == winning_score:
+                # Player 2 wins the game
+                show_victory_screen = True
+            else:
+                show_goal_screen = True  # Show "GOAL" screen
         elif ball.right >= WIDTH:
             score1 += 1
-            show_goal_screen = True  # Show "GOAL" screen
+            if score1 == winning_score:
+                # Player 1 wins the game
+                show_victory_screen = True
+            else:
+                show_goal_screen = True  # Show "GOAL" screen
 
         # Gradually increase ball speed
         ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
@@ -161,6 +203,14 @@ while True:
         # Cycle through rainbow colors
         rainbow_index = (rainbow_index + 1) % len(RAINBOW_COLORS)
 
-    pygame.display.update()  # Update the display
+    if show_victory_screen:
+        # Display "Player 1/2 wins the game!" screen in the center with rainbow colors
+        if score1 == winning_score:
+            victory_text = font.render("Player 1 wins the game!", True, RAINBOW_COLORS[rainbow_index])
+        else:
+            victory_text = font.render("Player 2 wins the game!", True, RAINBOW_COLORS[rainbow_index])
+        win.blit(victory_text, (WIDTH // 2 - victory_text.get_width() // 2, HEIGHT // 2 - victory_text.get_height() // 2))
+        # Cycle through rainbow colors
+        rainbow_index = (rainbow_index + 1) % len(RAINBOW_COLORS)
 
-pygame.quit()
+    pygame.display.update()  # Update the display
