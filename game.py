@@ -3,56 +3,6 @@ import random
 from math import fabs
 import time
 from pygame.locals import *
-import sys
-
-def selecting_difficulty():
-    pygame.init()
-
-    # Set up the screen
-    screen_width, screen_height = 640, 480
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.display.set_caption("Difficulty Selector")
-
-    # Colors
-    WHITE = (255, 255, 255)
-    GRAY = (128, 128, 128)
-    GREEN = (0, 255, 0)
-
-    # Fonts
-    font = pygame.font.Font(None, 36)
-
-    # Difficulty levels
-    difficulty_levels = ["Easy", "Medium", "Hard", "Crazy"]
-    selected_difficulty = 0
-
-    running = True
-    while running:
-        screen.fill(WHITE)
-
-        # Draw difficulty options
-        for i, level in enumerate(difficulty_levels):
-            text = font.render(level, True, GRAY if i != selected_difficulty else GREEN)
-            text_rect = text.get_rect(center=(screen_width // 2, (i + 2) * 60))
-            screen.blit(text, text_rect)
-
-        pygame.display.flip()
-
-        # Event handling
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    selected_difficulty = (selected_difficulty - 1) % len(difficulty_levels)
-                elif event.key == pygame.K_DOWN:
-                    selected_difficulty = (selected_difficulty + 1) % len(difficulty_levels)
-                elif event.key == pygame.K_RETURN:
-                    selected_difficulty_level = difficulty_levels[selected_difficulty]
-                    running = False
-                    pygame.quit()
-                    return(selected_difficulty_level)
 
 def play_pong_game(difficulty):
     # Initialize Pygame
@@ -85,13 +35,13 @@ def play_pong_game(difficulty):
 
     # Paddles
     PADDLE_WIDTH = 10
-    if difficulty == "Easy":
+    if difficulty == "easy":
         PADDLE_HEIGHT = 100
-    elif difficulty == "Medium":
+    elif difficulty == "medium":
         PADDLE_HEIGHT = 75
-    elif difficulty == "Hard":
+    elif difficulty == "hard":
         PADDLE_HEIGHT = 50
-    elif difficulty == "Crazy":
+    elif difficulty == "crazy":
         PADDLE_HEIGHT = 50
     STEP = 5
 
@@ -342,5 +292,4 @@ def play_pong_game(difficulty):
         pygame.display.update()  # Update the display
 
 if __name__ == "__main__":
-    difficulty = selecting_difficulty()
-    play_pong_game(difficulty)
+    play_pong_game()
