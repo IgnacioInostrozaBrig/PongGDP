@@ -196,6 +196,11 @@ while True:
     score_text = font.render(f"{score1} - {score2}", True, WHITE)
     win.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, 20))
 
+    # Draw the center dotted line
+    dotted_line_color = ball_color
+    for y in range(0, HEIGHT, 10):
+        pygame.draw.rect(win, dotted_line_color, (WIDTH // 2 - 2, y, 4, 6))
+
     if show_goal_screen:
         # Display "GOAL" screen in the center with rainbow colors
         goal_text = font.render("* * * * * * GOAL * * * * * *", True, RAINBOW_COLORS[rainbow_index])
