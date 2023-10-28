@@ -9,6 +9,13 @@ def play_pong_game(difficulty):
     pygame.init()
     print(difficulty)
     
+    # Additional balls for "impossible" difficulty
+    additional_balls = []
+    additional_ball_lifetime = 3.5  # Lifetime for additional balls in seconds
+
+    # Define the maximum number of additional balls
+    max_balls = 50
+
     # Initialize the mixer for sound effects
     pygame.mixer.init()
     collide_sound = pygame.mixer.Sound("collide.mp3")
@@ -28,13 +35,13 @@ def play_pong_game(difficulty):
 
     # Paddles
     PADDLE_WIDTH = 10
-    if(difficulty)=="easy":
+    if difficulty == "easy":
         PADDLE_HEIGHT = 100
-    elif(difficulty)=="medium":
+    elif difficulty == "medium":
         PADDLE_HEIGHT = 75
-    elif(difficulty)=="hard":
+    elif difficulty == "hard":
         PADDLE_HEIGHT = 50
-    elif(difficulty)=="impossible":
+    elif difficulty == "impossible":
         PADDLE_HEIGHT = 50
     STEP = 5
 
@@ -95,8 +102,8 @@ def play_pong_game(difficulty):
 
     # Main game loop
     while True:
-        if(game_end):
-            return(game_end)
+        if game_end:
+            return game_end
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -179,6 +186,8 @@ def play_pong_game(difficulty):
                 if (ball.colliderect(paddle1) and ball_speed_x < 0) or (ball.colliderect(paddle2) and ball_speed_x > 0):
                     ball_speed_x *= -1
                     collide_sound.play()
+                    if(difficulty=="impossible"):
+                        ball_color = random_color()
 
                 # Collisions with the window edges
                 if ball.top <= 0 or ball.bottom >= HEIGHT:
@@ -205,6 +214,35 @@ def play_pong_game(difficulty):
                 ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
                 ball_speed_y += speed_increment if ball_speed_y > 0 else -speed_increment
 
+                # Additional balls for "impossible" difficulty
+                for additional_ball in additional_balls:
+                    additional_ball["ball"].x += additional_ball["speed_x"]
+                    additional_ball["ball"].y += additional_ball["speed_y"]
+
+                # Spawn additional balls for "impossible" difficulty based on elapsed time
+                if additional_balls:
+                    # Check if additional balls should be despawned
+                    balls_to_remove = []
+                    current_time = time.time()
+                    for i, additional_ball in enumerate(additional_balls):
+                        if current_time - additional_ball["creation_time"] >= additional_ball_lifetime:
+                            balls_to_remove.append(i)
+
+                    # Remove the balls that have exceeded their lifetime
+                    for i in reversed(balls_to_remove):
+                        additional_balls.pop(i)
+
+                # If the number of balls is less than the defined maximum, spawn a new ball
+                if len(additional_balls) < max_balls and difficulty == "impossible":
+                    new_ball = pygame.Rect(WIDTH // 2 - BALL_WIDTH // 2, HEIGHT // 2 - BALL_WIDTH // 2, BALL_WIDTH, BALL_WIDTH)
+                    additional_balls.append({
+                        "ball": new_ball,
+                        "speed_x": random.uniform(-2.5, 2.5),
+                        "speed_y": random.uniform(-2.5, 2.5),
+                        "color": random_color(),
+                        "creation_time": time.time()
+                    })
+
         # Limit the frame rate to 60 frames per second using clock.tick(60)
         clock.tick(60)
 
@@ -221,6 +259,10 @@ def play_pong_game(difficulty):
             pygame.draw.rect(win, dotted_line_color, (WIDTH // 2 - 2, y, 4, 6))
 
         score_text = font.render(f"{score1} - {score2}", True, WHITE)
+
+        # Draw additional balls for "impossible" difficulty
+        for additional_ball in additional_balls:
+            pygame.draw.ellipse(win, additional_ball["color"], additional_ball["ball"])
 
         win.blit(p1_label, (WIDTH // 2 - score_text.get_width() // 2 - 50, 20))
         win.blit(p2_label, (WIDTH // 2 + score_text.get_width() // 2 + 10, 20))
