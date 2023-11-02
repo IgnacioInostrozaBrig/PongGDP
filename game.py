@@ -3,6 +3,7 @@ import random
 from math import fabs
 import time
 from pygame.locals import *
+import sys
 
 def play_pong_game(difficulty):
     # Initialize Pygame
@@ -18,10 +19,10 @@ def play_pong_game(difficulty):
 
     # Initialize the mixer for sound effects
     pygame.mixer.init()
-    collide_sound = pygame.mixer.Sound("collide.mp3")
-    goal_sound = pygame.mixer.Sound("goal.mp3")
-    victory_sound = pygame.mixer.Sound("triumph.mp3")
-    start_sound = pygame.mixer.Sound("startgame.mp3")
+    collide_sound = pygame.mixer.Sound("assets/collide.mp3")
+    goal_sound = pygame.mixer.Sound("assets/goal.mp3")
+    victory_sound = pygame.mixer.Sound("assets/triumph.mp3")
+    start_sound = pygame.mixer.Sound("assets/startgame.mp3")
 
     # Window settings
     WIDTH, HEIGHT = 800, 600
@@ -33,14 +34,17 @@ def play_pong_game(difficulty):
     RAINBOW_COLORS = [(255, 0, 0), (255, 127, 0), (255, 255, 0), (0, 255, 0), (0, 0, 255), (75, 0, 130)]
     rainbow_index = 0
 
+    SPEED_INCREASE = 0.001
     # Paddles
     PADDLE_WIDTH = 10
     if difficulty == "easy":
         PADDLE_HEIGHT = 100
     elif difficulty == "medium":
         PADDLE_HEIGHT = 75
+        SPEED_INCREASE = 0.002
     elif difficulty == "hard":
         PADDLE_HEIGHT = 50
+        SPEED_INCREASE = 0.003
     elif difficulty == "crazy":
         PADDLE_HEIGHT = 50
     STEP = 5
@@ -56,7 +60,6 @@ def play_pong_game(difficulty):
     initial_ball_speed_x = 2 if random.randint(0, 1) == 0 else -2
     ball_speed_x = initial_ball_speed_x
     ball_speed_y = (random.uniform(-2, -1.5), random.uniform(1.5, 2))[random.getrandbits(1)]
-    speed_increment = 0.001
 
     # Score
     score1 = 0
@@ -211,8 +214,8 @@ def play_pong_game(difficulty):
                         show_goal_screen = True
 
                 # Gradually increase ball speed
-                ball_speed_x += speed_increment if ball_speed_x > 0 else -speed_increment
-                ball_speed_y += speed_increment if ball_speed_y > 0 else -speed_increment
+                ball_speed_x += SPEED_INCREASE if ball_speed_x > 0 else -SPEED_INCREASE
+                ball_speed_y += SPEED_INCREASE if ball_speed_y > 0 else -SPEED_INCREASE
 
                 # Additional balls for "crazy" difficulty
                 for additional_ball in additional_balls:
